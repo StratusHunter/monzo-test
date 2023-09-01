@@ -1,7 +1,7 @@
 package com.monzo.androidtest.api
 
-import com.monzo.androidtest.api.model.ApiArticle
 import com.monzo.androidtest.api.model.ApiArticleListResponse
+import com.monzo.androidtest.api.model.ApiArticleResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -13,7 +13,7 @@ interface GuardianService {
 
     @GET
     fun getArticle(
-            @Url articleUrl: String,
-            @Query("show-fields") fields: String
-    ): Single<ApiArticle>
+        @Url articleUrl: String,
+        @Query("show-fields") fields: String
+    ): Single<ApiArticleResponse>
 }
