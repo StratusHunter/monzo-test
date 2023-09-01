@@ -2,6 +2,7 @@ package com.monzo.androidtest.articles
 
 import android.content.Context
 import android.content.res.Resources
+import article.model.ArticleDetailMapper
 import com.monzo.androidtest.R
 import com.monzo.androidtest.api.GuardianService
 import com.monzo.androidtest.articles.model.ArticleMapper
@@ -15,26 +16,26 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.*
+import java.util.Date
 
 class ArticlesModule {
-    fun inject(context: Context): ArticlesViewModel {
-        return ArticlesViewModel(ArticlesRepository(createGuardianService(context), ArticleMapper()))
+    fun createRepository(context: Context): ArticlesRepository {
+        return ArticlesRepository(createGuardianService(context), ArticleMapper(), ArticleDetailMapper())
     }
 
     private fun createGuardianService(context: Context): GuardianService {
         val moshi = Moshi.Builder()
-                .add(KotlinJsonAdapterFactory())
-                .add(Date::class.java, Rfc3339DateJsonAdapter())
-                .build()
+            .add(KotlinJsonAdapterFactory())
+            .add(Date::class.java, Rfc3339DateJsonAdapter())
+            .build()
 
         return Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .client(createOkHttpClient(context.resources))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
-                .create(GuardianService::class.java)
+            .baseUrl(BASE_URL)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(createOkHttpClient(context.resources))
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
+            .create(GuardianService::class.java)
     }
 
     private fun createOkHttpClient(resources: Resources): OkHttpClient {

@@ -1,6 +1,6 @@
 package com.monzo.androidtest.articles
 
-import android.content.Context
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,28 +10,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.monzo.androidtest.R
 import com.monzo.androidtest.articles.model.Article
-import java.util.*
-
-private var context: Context? = null
 
 internal class ArticleAdapter(
-        ctx: Context
+    private val articleClickListener: ArticleViewHolder.ArticleClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     private val articles: MutableList<Article> = ArrayList()
 
-    init {
-        context = ctx
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater = LayoutInflater.from(context)
+        val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.list_item_article, parent, false)
         return ArticleViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val articleViewHolder = holder as ArticleViewHolder
-        articleViewHolder.bind(articles[position])
+        articleViewHolder.bind(articles[position], articleClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -39,17 +33,26 @@ internal class ArticleAdapter(
     }
 
     fun showArticles(articles: List<Article>) {
-        this.articles.addAll(articles)
+        this.articles.addAll(articles.sortedByDescending { it.published })
         notifyDataSetChanged()
     }
 
     class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        fun bind(article: Article) {
+        interface ArticleClickListener {
+            fun onArticleClick(article: Article)
+        }
+
+        fun bind(article: Article, clickListener: ArticleClickListener) {
+
+            val context = itemView.context
             val headlineView = itemView.findViewById<TextView>(R.id.article_headline_textview)
+            val dateView = itemView.findViewById<TextView>(R.id.article_date_textview)
             val thumbnailView = itemView.findViewById<ImageView>(R.id.article_thumbnail_imageview)
 
             headlineView.text = article.title
-            Glide.with(context!!).load(article.thumbnail).into(thumbnailView)
+            dateView.text = DateFormat.getDateFormat(context).format(article.published)
+            Glide.with(context).load(article.thumbnail).circleCrop().into(thumbnailView)
+            itemView.setOnClickListener { clickListener.onArticleClick(article) }
         }
     }
 }
