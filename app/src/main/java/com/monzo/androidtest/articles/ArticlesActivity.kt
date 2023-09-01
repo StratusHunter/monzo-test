@@ -26,7 +26,7 @@ class ArticlesActivity : AppCompatActivity() {
 
         viewModel = HeadlinesApp.from(applicationContext).inject(this)
 
-        adapter = ArticleAdapter(this)
+        adapter = ArticleAdapter()
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
