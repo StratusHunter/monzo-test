@@ -18,6 +18,14 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'com.monzo.androidtest'
+
+    def properties = new Properties()
+    def localProperties = project.rootProject.file("local.properties")
+    properties.load(localProperties.newDataInputStream())
+
+    defaultConfig {
+        resValue "string", "guardian_api_key", properties.getProperty("guardian_api_key", "")
+    }
 }
 
 dependencies {

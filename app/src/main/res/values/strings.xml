@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">The Guardian</string>
+    <string name="error_loading_articles">Error loading article list.</string>
 </resources>

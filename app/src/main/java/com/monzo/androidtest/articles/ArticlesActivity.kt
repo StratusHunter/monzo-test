@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import com.monzo.androidtest.HeadlinesApp
 import com.monzo.androidtest.R
 
@@ -33,7 +34,11 @@ class ArticlesActivity : AppCompatActivity() {
 
         viewModel.state.observe(this) { state ->
             swipeRefreshLayout.isRefreshing = state.refreshing
-            adapter.showArticles(state.articles)
+            adapter.showArticles(state.articles ?: emptyList())
+
+            if (state.articles == null) {
+                Snackbar.make(recyclerView, R.string.error_loading_articles, Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 }
